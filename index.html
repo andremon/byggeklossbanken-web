@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Byggeklossbanken · Alle apper</title>
+  <meta name="description" content="Katalog over alle appene i Arena- og ay.no-økosystemet – info, brukerveiledning og nedlasting.">
+  <meta name="theme-color" content="#0E1014">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Byggeklossbanken">
+  <meta property="og:description" content="Ett økosystem. Arena og ay.no. Alle appene på ett sted.">
+  <meta property="og:type" content="website">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brandmark" href="#/">
+        <span class="stack" aria-hidden="true"></span>
+        <span>Byggeklossbanken</span>
+      </a>
+      <nav>
+        <a href="#/">Katalog</a>
+        <a href="#/#om">Om</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="app"><!-- bygges av js/app.js --></main>
+
+  <footer class="foot-site">
+    <div class="wrap">
+      <div>© <span id="ar"></span> Andre · Arena &amp; ay.no</div>
+      <div>Bygget av gjenbrukbare byggeklosser · Oslo</div>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>document.getElementById("ar").textContent = new Date().getFullYear();</script>
+</body>
+</html>
