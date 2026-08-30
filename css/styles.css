@@ -271,3 +271,82 @@ a { color: inherit; text-decoration: none; }
   .stats { gap: 22px; }
   .detail-hero .mono { width: 60px; height: 60px; font-size: 1.5rem; }
 }
+
+/* ============================================================================
+   NY FORSIDE — topplinje-logo, nedtonet topp, kaskademeny (venstre kolonne)
+   ============================================================================ */
+
+/* Topplinje-logo litt tydeligere */
+.brandmark .stack { width: 30px; height: 30px; border-radius: 8px; }
+.brandmark span { font-size: 1.1rem; }
+
+/* Nedtonet topp: bare en liten telle-linje + merke-toggle */
+.kathead {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 14px; padding: 26px 0 20px;
+}
+.katcount { font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; color: var(--text); }
+.katcount .dim { color: var(--faint); font-weight: 500; }
+.brandtoggle { display: flex; gap: 8px; }
+
+/* To-kolonne-oppsett */
+.layout { display: flex; gap: 28px; align-items: flex-start; padding-bottom: 70px; }
+.content { flex: 1; min-width: 0; }
+.content .search { max-width: none; margin-bottom: 20px; }
+
+/* Sidemeny */
+.sidebar { width: 234px; flex: none; position: sticky; top: 78px; align-self: flex-start; }
+.cat-toggle {
+  display: none; width: 100%; align-items: center; gap: 9px; cursor: pointer;
+  font-family: var(--font-body); font-weight: 600; font-size: .95rem; color: var(--text);
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm);
+  padding: 12px 15px; margin-bottom: 12px;
+}
+.sidebar-nav { display: flex; flex-direction: column; gap: 3px; }
+
+.navitem {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  width: 100%; text-align: left; cursor: pointer;
+  font-family: var(--font-body); font-size: .95rem; color: var(--muted);
+  background: transparent; border: 0; border-radius: 9px; padding: 9px 12px;
+  transition: background .15s var(--ease), color .15s var(--ease);
+}
+.navitem:hover { background: var(--surface); color: var(--text); }
+.navitem.active { background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--text); }
+.navall { font-family: var(--font-display); font-weight: 600; margin-bottom: 4px; }
+
+.navgroup-head {
+  display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; cursor: pointer;
+  font-family: var(--font-display); font-weight: 600; font-size: .96rem; color: var(--text);
+  background: transparent; border: 0; border-radius: 9px; padding: 9px 12px;
+  transition: background .15s var(--ease);
+}
+.navgroup-head:hover { background: var(--surface); }
+.navgroup-head.active { color: var(--accent); }
+.navgroup-head .gname { flex: 1; }
+.navgroup-head .chev { color: var(--faint); font-size: 1.05rem; line-height: 1; transition: transform .2s var(--ease); display: inline-block; }
+.navgroup.open .navgroup-head .chev { transform: rotate(90deg); }
+
+.cnt {
+  font-family: var(--font-body); font-size: .74rem; color: var(--faint);
+  background: var(--bg); border: 1px solid var(--line-soft); border-radius: 999px;
+  padding: 1px 8px; min-width: 20px; text-align: center; flex: none;
+}
+.navgroup-head.active .cnt { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
+
+.navgroup-items { display: none; margin: 2px 0 6px; padding-left: 8px; border-left: 1px solid var(--line); margin-left: 14px; }
+.navgroup.open .navgroup-items { display: flex; flex-direction: column; gap: 2px; animation: snapIn .25s var(--ease) both; }
+.navitem.sub { font-size: .9rem; padding: 7px 12px; }
+
+/* Rutenett litt tettere ved siden av menyen */
+.content .grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+
+/* Mobil: menyen blir en nedtrekksknapp */
+@media (max-width: 860px) {
+  .layout { flex-direction: column; gap: 0; }
+  .sidebar { width: 100%; position: static; margin-bottom: 6px; }
+  .cat-toggle { display: flex; }
+  .sidebar-nav { display: none; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 8px; margin-bottom: 16px; }
+  .sidebar.open .sidebar-nav { display: flex; }
+  .content .grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+}

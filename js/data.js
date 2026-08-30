@@ -20,6 +20,18 @@ window.MERKER = {
   ayno:  { navn: "ay.no",  farge: "#35D6C0", beskrivelse: "Forretningsinfrastruktur og API" },
 };
 
+/* Kategorigrupper for kaskademenyen i venstre kolonne. Hver gruppe samler flere
+   kategorier. Rediger fritt – kategorier som ikke er nevnt her havner automatisk
+   i en «Annet»-gruppe, så ingenting forsvinner. */
+window.KATEGORIGRUPPER = [
+  { navn: "Spill & læring",   kategorier: ["Spill", "Læring", "Språk"] },
+  { navn: "Media & kreativt", kategorier: ["Media", "Musikk", "Bilde", "Kreativ"] },
+  { navn: "Hverdag",          kategorier: ["Helse", "Trening", "Friluft", "Fest", "Kjøretøy", "Transport", "Slekt", "Livsstil", "Liv", "Trygghet"] },
+  { navn: "Jobb & økonomi",   kategorier: ["Business", "Produktivitet", "Finans", "Jus", "Regnskap", "Marked"] },
+  { navn: "Verktøy",          kategorier: ["Verktøy"] },
+  { navn: "Teknisk · ay.no",  kategorier: ["Data", "API", "Utvikling", "Plattform", "Nettside", "Infrastruktur", "AI"] },
+];
+
 window.APPS = [
 
   /* ==== Arena · spill ====================================================== */
@@ -1232,6 +1244,53 @@ window.APPS = [
       { tittel: "Enhet", innhold: "Se grunndata og status-chips, regnskap med nøkkeltall per år, og eiere med eierandeler. Trykk deg oppover i eierkjeder." },
       { tittel: "Offline", innhold: "Nylig sette selskaper er cachet og åpnes uten nett. Pull-to-refresh tvinger ny henting." }
     ],
+    nedlasting: { googlePlay: "", direkte: "", web: "" },
+  },
+
+  {
+    slug: "kunstarena", ikonBilde: "img/kunstarena.svg", navn: "KunstArena", merke: "arena", kategori: "Kreativ",
+    plattform: ["Web"], ikon: "KA", farge: "#C026D3", status: "utvikling",
+    tagline: "Gjør ord og følelser til abstrakt kunst.",
+    kortBeskrivelse: "Gjør ord, følelser og setninger til abstrakt kunst du kan skrive ut.",
+    beskrivelse: "KunstArena (Art Abstractor) forvandler ord, følelser og setninger til abstrakt kunst. Et «Art DNA»-parameterlag tolker teksten og styrer en seedet generativ canvas, så samme input alltid gir samme bilde. Gratis og offline med en lokal norsk leksikonmotor; med tilkobling får du AI-semantisk analyse (Claude) for dypere tolkning. Utskrift bestilles utenfor appen via Gelato.",
+    funksjoner: [
+      "«Art DNA» tolker tekst til bildeparametere",
+      "Seedet generativ canvas – samme tekst gir samme bilde",
+      "Lokal norsk leksikonmotor (gratis, offline)",
+      "AI-semantisk analyse med Claude (tilkoblet nivå)",
+      "Utskrift via Gelato"
+    ],
+    skjermbilder: [],
+    veiledning: [
+      { tittel: "Kom i gang", innhold: "Skriv inn et ord, en følelse eller en hel setning. KunstArena tolker den og lager et abstrakt bilde." },
+      { tittel: "Lag kunsten", innhold: "«Art DNA» gjør teksten om til bildeparametere som styrer en seedet generativ canvas – samme tekst gir alltid samme bilde. Slå på AI-analyse for dypere tolkning." },
+      { tittel: "Skriv ut", innhold: "Bestill bildet som utskrift via Gelato, direkte fra resultatet." }
+    ],
+    pris: { modell: "freemium" },
+    nedlasting: { googlePlay: "", direkte: "", web: "" },
+  },
+
+  {
+    slug: "introarena", ikonBilde: "img/introarena.svg", navn: "IntroArena", merke: "arena", kategori: "Media",
+    plattform: ["Windows","Mac","Linux"], ikon: "IA", farge: "#06B6D4", status: "utvikling",
+    tagline: "Video-intro fra din egen tekst.",
+    kortBeskrivelse: "Lag video-intro der bokstavene flyr sammen, står stille og løses opp i partikler.",
+    beskrivelse: "IntroArena lager video-intro fra din egen tekst. Bokstavene flyr sammen, står stille et øyeblikk, og løses så opp – alt bygget av partikler samplet fra selve teksten (løses opp, faller til gulvet, eksploderer, blåser bort). En hel intro er ren data (en JSON-spec med klipp, materiale, effekter og toning), så samme jobb kan kjøres to steder: du velger «Render: Lokalt» (gratis, på egen maskin med innebygd ffmpeg) eller «Render: Sky» (raskere og tyngre, mot betaling som dekker sky-kostnaden). Samme motor og samme spec – bare ett valg for hvor jobben kjøres.",
+    funksjoner: [
+      "Partikkel-intro: bokstavene flyr sammen, står stille, løses opp",
+      "Effekter: løses opp, faller til gulvet, eksploderer, blåser bort",
+      "Partiklene samples fra selve teksten",
+      "Render lokalt – gratis, på egen maskin (innebygd ffmpeg)",
+      "Render i sky – raskere, mot betaling som dekker kostnaden",
+      "Intro som JSON-spec – samme motor begge veier"
+    ],
+    skjermbilder: [],
+    veiledning: [
+      { tittel: "Kom i gang", innhold: "Skriv inn teksten som skal bli intro." },
+      { tittel: "Velg effekt", innhold: "Velg hvordan teksten skal oppføre seg – flyr sammen og løses opp, faller til gulvet, eksploderer eller blåser bort. Alt bygges av partikler samplet fra selve teksten." },
+      { tittel: "Render lokalt eller i sky", innhold: "Velg «Render: Lokalt» for å bruke egen maskin gratis (innebygd ffmpeg), eller «Render: Sky» for raskere rendering mot en betaling som dekker sky-kostnaden. Samme spec sendes begge veier – du får intro-videoen i retur." }
+    ],
+    pris: { modell: "freemium" },
     nedlasting: { googlePlay: "", direkte: "", web: "" },
   },
 
