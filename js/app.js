@@ -8,6 +8,10 @@
   var APPS = (window.APPS || []).slice();
   var MERKER = window.MERKER || {};
   var root = document.getElementById("app");
+  var FREMDRIFT = window.FREMDRIFT || { skala: {}, apper: [] };
+  var NIVA_KORT = { 0: "Parkert", 1: "Konsept", 2: "Under bygging", 3: "Beta", 4: "Nesten klar", 5: "Live" };
+  var NIVA_PR_SLUG = {};
+  FREMDRIFT.apper.forEach(function (f) { NIVA_PR_SLUG[f.slug] = f; });
 
   // Bygg gruppene (fra config) + auto «Annet» for kategorier som ikke er nevnt
   var GRUPPER = (function () {
@@ -40,6 +44,26 @@
         : { klasse: "betalt", tekst: "Betalt" };
       default:         return { klasse: "kommer", tekst: "Kommer" };
     }
+  }
+
+  function nivaTag(f) {
+    return '<span class="tag niva niva-' + f.status + '" title="' + esc(FREMDRIFT.skala[f.status] || "") + '">' +
+      'Nivå ' + f.status + ' · ' + esc(NIVA_KORT[f.status]) + '</span>';
+  }
+  // Gammel tekst-status vises bare når appen ikke har et fremdriftsnivå
+  function statusTagGammel(a) {
+    if (a.status === "utvikling") return '<span class="tag status-utvikling">Under utvikling</span>';
+    if (a.status === "beta")   return '<span class="tag status-beta">Beta</span>';
+    if (a.status === "kommer") return '<span class="tag status-kommer">Kommer</span>';
+    return "";
+  }
+  function statusTag(a) { var f = NIVA_PR_SLUG[a.slug]; return f ? nivaTag(f) : statusTagGammel(a); }
+  function datoTekst(d) {
+    if (!d) return "";
+    var mnd = ["jan", "feb", "mar", "apr", "mai", "jun", "jul", "aug", "sep", "okt", "nov", "des"];
+    var m = String(d).match(/^(\d{4})-(\d{2})(?:-(\d{2}))?/);
+    if (!m) return esc(d);
+    return (m[3] ? (+m[3]) + ". " : "") + mnd[+m[2] - 1] + " " + m[1];
   }
 
   function baseApps() { return state.merke === "alle" ? APPS : APPS.filter(function (a) { return a.merke === state.merke; }); }
@@ -160,21 +184,128 @@
       var ikon = a.ikonBilde
         ? ' class="mono bilde" style="--k:' + k + ';background-image:url(' + esc(a.ikonBilde) + ')"'
         : ' class="mono" style="--k:' + k + '"';
-      var statusTag = "";
-      if (a.status === "utvikling") statusTag = '<span class="tag status-utvikling">Under utvikling</span>';
-      if (a.status === "beta")   statusTag = '<span class="tag status-beta">Beta</span>';
-      if (a.status === "kommer") statusTag = '<span class="tag status-kommer">Kommer</span>';
       return '<a class="block" href="#/app/' + esc(a.slug) + '" style="--k:' + k + ';animation-delay:' + Math.min(i * 22, 360) + 'ms">' +
         '<div class="head">' +
           '<div' + ikon + '>' + (a.ikonBilde ? "" : esc(a.ikon || a.navn.slice(0, 2))) + '</div>' +
           '<div><div class="title">' + esc(a.navn) + '</div><div class="kat">' + esc(a.kategori || "") + '</div></div>' +
         '</div>' +
         '<div class="desc">' + esc(a.kortBeskrivelse || "") + '</div>' +
-        '<div class="foot">' + prisTag + statusTag +
+        '<div class="foot">' + prisTag + statusTag(a) +
           ((a.plattform || []).map(function (pl) { return '<span class="tag">' + esc(pl) + '</span>'; }).join("")) +
         '</div>' +
       '</a>';
     }).join("");
+  }
+
+  // ---- fremdrift ----------------------------------------------------------
+  var fstate = { type: "alle", niva: null, rekkefolge: "ferdigst" };
+
+  function nivaPrikker(n) {
+    var h = '<span class="prikker" aria-hidden="true">';
+    for (var i = 1; i <= 5; i++) h += '<i class="' + (i <= n ? "pa niva-" + n : "") + '"></i>';
+    return h + '</span>';
+  }
+  function fremdriftBoks(f) {
+    return '<section class="section fbox"><h2>Fremdrift</h2>' +
+      '<div class="fbox-row">' + nivaPrikker(f.status) + nivaTag(f) + '<span class="fdato">oppdatert ' + datoTekst(f.oppdatert) + '</span></div>' +
+      '<p class="fskala">' + esc(FREMDRIFT.skala[f.status] || "") + '</p>' +
+      (f.nesteSteg ? '<p class="fneste"><span>Neste steg</span>' + esc(f.nesteSteg) + '</p>' : "") +
+      '</section>';
+  }
+
+  function renderFremdrift() {
+    var alle = FREMDRIFT.apper;
+    var perNiva = [0, 1, 2, 3, 4, 5].map(function (n) { return alle.filter(function (f) { return f.status === n; }).length; });
+    var ikkeVurdert = APPS.filter(function (a) { return !NIVA_PR_SLUG[a.slug]; }).length;
+
+    var stolpe = [5, 4, 3, 2, 1, 0].map(function (n) {
+      if (!perNiva[n]) return "";
+      return '<button class="seg niva-bg-' + n + '" data-niva="' + n + '" style="flex:' + perNiva[n] + '" title="Nivå ' + n + ': ' + esc(FREMDRIFT.skala[n]) + '">' + perNiva[n] + '</button>';
+    }).join("");
+
+    var forklaring = [5, 4, 3, 2, 1, 0].map(function (n) {
+      return '<button class="leg' + (fstate.niva === n ? " active" : "") + '" data-niva="' + n + '">' +
+        '<span class="sw niva-bg-' + n + '"></span><b>' + n + '</b> ' + esc(NIVA_KORT[n]) + '<span class="cnt">' + perNiva[n] + '</span></button>';
+    }).join("");
+
+    root.innerHTML =
+      '<div class="wrap fremdrift">' +
+        '<header class="fhead">' +
+          '<h1>Fremdrift</h1>' +
+          '<p class="lede">Hvor langt hver app og byggekloss har kommet mot lansering. ' +
+            'Nivåene oppdateres automatisk fra prosjektmappene.</p>' +
+        '</header>' +
+        '<div class="fstolpe" id="fstolpe">' + stolpe + '</div>' +
+        '<div class="flegende" id="flegende">' + forklaring + '</div>' +
+        '<div class="fkontroller">' +
+          '<div class="brandtoggle" id="ftype">' +
+            '<button class="chip" data-type="alle" aria-pressed="' + (fstate.type === "alle") + '">Alle</button>' +
+            '<button class="chip" data-type="app" aria-pressed="' + (fstate.type === "app") + '">Apper</button>' +
+            '<button class="chip" data-type="byggekloss" aria-pressed="' + (fstate.type === "byggekloss") + '">Byggeklosser</button>' +
+          '</div>' +
+          '<label class="fsort">Sorter <select id="fsort">' +
+            '<option value="ferdigst"' + (fstate.rekkefolge === "ferdigst" ? " selected" : "") + '>Nærmest lansering først</option>' +
+            '<option value="nyest"' + (fstate.rekkefolge === "nyest" ? " selected" : "") + '>Sist oppdatert</option>' +
+            '<option value="navn"' + (fstate.rekkefolge === "navn" ? " selected" : "") + '>Navn</option>' +
+          '</select></label>' +
+        '</div>' +
+        '<div class="ftabell" id="ftabell"></div>' +
+        '<p class="fnote">' + alle.length + ' vurdert' + (ikkeVurdert ? ' · ' + ikkeVurdert + ' apper i katalogen er ikke vurdert ennå' : '') +
+          ' · sist samlet ' + datoTekst((FREMDRIFT.generert || "").slice(0, 10)) + '</p>' +
+      '</div>';
+
+    function velgNiva(e) {
+      var b = e.target.closest("[data-niva]"); if (!b) return;
+      var n = +b.getAttribute("data-niva");
+      fstate.niva = fstate.niva === n ? null : n;
+      document.querySelectorAll("#flegende .leg").forEach(function (x) { x.classList.toggle("active", +x.getAttribute("data-niva") === fstate.niva); });
+      document.querySelectorAll("#fstolpe .seg").forEach(function (x) { x.classList.toggle("dim", fstate.niva !== null && +x.getAttribute("data-niva") !== fstate.niva); });
+      renderFTabell();
+    }
+    document.getElementById("fstolpe").addEventListener("click", velgNiva);
+    document.getElementById("flegende").addEventListener("click", velgNiva);
+    document.getElementById("ftype").addEventListener("click", function (e) {
+      var b = e.target.closest("[data-type]"); if (!b) return;
+      fstate.type = b.getAttribute("data-type");
+      this.querySelectorAll(".chip").forEach(function (c) { c.setAttribute("aria-pressed", c === b ? "true" : "false"); });
+      renderFTabell();
+    });
+    document.getElementById("fsort").addEventListener("change", function () { fstate.rekkefolge = this.value; renderFTabell(); });
+    renderFTabell();
+  }
+
+  function renderFTabell() {
+    var el = document.getElementById("ftabell"); if (!el) return;
+    var liste = FREMDRIFT.apper.filter(function (f) {
+      if (fstate.type !== "alle" && f.type !== fstate.type) return false;
+      if (fstate.niva !== null && f.status !== fstate.niva) return false;
+      return true;
+    }).slice();
+    liste.sort(function (x, y) {
+      if (fstate.rekkefolge === "navn") return x.navn.localeCompare(y.navn, "nb");
+      if (fstate.rekkefolge === "nyest") return String(y.oppdatert).localeCompare(String(x.oppdatert)) || y.status - x.status;
+      // nærmest lansering: høyest nivå først, men «live» (5) og «parkert» (0) til slutt
+      function vekt(s) { return s === 5 ? -1 : s === 0 ? -2 : s; }
+      return vekt(y.status) - vekt(x.status) || x.navn.localeCompare(y.navn, "nb");
+    });
+    if (!liste.length) { el.innerHTML = '<div class="empty"><h3>Ingen treff</h3><p>Ingen på dette nivået.</p></div>'; return; }
+
+    el.innerHTML =
+      '<div class="frad fhoder" role="row"><span>App</span><span>Nivå</span><span>Neste steg</span><span>Oppdatert</span></div>' +
+      liste.map(function (f) {
+        var iKatalog = APPS.some(function (a) { return a.slug === f.slug; });
+        var navn = iKatalog ? '<a href="#/app/' + esc(f.slug) + '">' + esc(f.navn) + '</a>' : esc(f.navn);
+        var hist = f.historikk || [];
+        var opp = hist.length > 1 && hist[hist.length - 1].status > hist[hist.length - 2].status
+          ? '<span class="opp" title="Gikk opp fra nivå ' + hist[hist.length - 2].status + '">▲</span>' : "";
+        return '<div class="frad" role="row">' +
+          '<span class="fnavn">' + navn + (f.type === "byggekloss" ? '<span class="tag liten">kloss</span>' : "") +
+            (f.merknad ? '<small>' + esc(f.merknad) + '</small>' : "") + '</span>' +
+          '<span class="fniva">' + nivaPrikker(f.status) + '<span class="nlbl niva-' + f.status + '">' + f.status + ' · ' + esc(NIVA_KORT[f.status]) + '</span>' + opp + '</span>' +
+          '<span class="fneste-celle">' + (f.nesteSteg ? esc(f.nesteSteg) : '<span class="dim">–</span>') + '</span>' +
+          '<span class="fdato">' + datoTekst(f.oppdatert) + '</span>' +
+        '</div>';
+      }).join("");
   }
 
   // ---- app-side -----------------------------------------------------------
@@ -190,9 +321,7 @@
     if (m) badges.push('<span class="tag">' + esc(m.navn) + '</span>');
     if (a.kategori) badges.push('<span class="tag">' + esc(a.kategori) + '</span>');
     if (a.pris) badges.push('<span class="tag pris-' + p.klasse + '">' + esc(p.tekst) + '</span>');
-    if (a.status === "utvikling") badges.push('<span class="tag status-utvikling">Under utvikling</span>');
-    if (a.status === "beta")   badges.push('<span class="tag status-beta">Beta</span>');
-    if (a.status === "kommer") badges.push('<span class="tag status-kommer">Kommer</span>');
+    var st = statusTag(a); if (st) badges.push(st);
     (a.plattform || []).forEach(function (pl) { badges.push('<span class="tag">' + esc(pl) + '</span>'); });
 
     var knapper = [];
@@ -234,6 +363,7 @@
             '<div class="badges">' + badges.join("") + '</div>' +
           '</div>' +
         '</div>' +
+        (NIVA_PR_SLUG[a.slug] ? fremdriftBoks(NIVA_PR_SLUG[a.slug]) : "") +
         (a.beskrivelse ? '<section class="section"><h2>Om appen</h2><p class="prose">' + esc(a.beskrivelse) + '</p></section>' : "") +
         '<section class="section"><h2>Last ned</h2><div class="dl-row">' + knapper.join("") + '</div></section>' +
         funk + shots + guide +
@@ -245,6 +375,7 @@
     var h = location.hash || "#/";
     var m = h.match(/^#\/app\/([\w-]+)/);
     if (m) renderApp(m[1]);
+    else if (/^#\/fremdrift/.test(h)) { document.title = "Fremdrift · Byggeklossbanken"; renderFremdrift(); window.scrollTo(0, 0); }
     else { document.title = "Byggeklossbanken · Alle apper"; renderKatalog(); }
   }
   window.addEventListener("hashchange", route);

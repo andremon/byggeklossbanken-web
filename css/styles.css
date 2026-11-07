@@ -266,7 +266,8 @@ a { color: inherit; text-decoration: none; }
 
 /* ---------- Mobil -------------------------------------------------------- */
 @media (max-width: 620px) {
-  .topbar nav { display: none; }
+  .topbar nav a:last-child { display: none; } /* «Om» skjules, Katalog og Fremdrift blir */
+  .topbar nav a { padding: 7px 10px; }
   .hero { padding: 44px 0 24px; }
   .stats { gap: 22px; }
   .detail-hero .mono { width: 60px; height: 60px; font-size: 1.5rem; }
@@ -349,4 +350,89 @@ a { color: inherit; text-decoration: none; }
   .sidebar-nav { display: none; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 8px; margin-bottom: 16px; }
   .sidebar.open .sidebar-nav { display: flex; }
   .content .grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+}
+
+/* ============================================================================
+   FREMDRIFT — nivå 0–5 fra js/status.js (generert av verktoy/samle-status.mjs)
+   ============================================================================ */
+:root {
+  --n0: #6B7280; --n1: #8B93A1; --n2: #7FB8E0;
+  --n3: #E0C77F; --n4: #35D6C0; --n5: #7FE0A8;
+}
+.niva-0 { --n: var(--n0); } .niva-1 { --n: var(--n1); } .niva-2 { --n: var(--n2); }
+.niva-3 { --n: var(--n3); } .niva-4 { --n: var(--n4); } .niva-5 { --n: var(--n5); }
+.niva-bg-0 { background: var(--n0); } .niva-bg-1 { background: var(--n1); } .niva-bg-2 { background: var(--n2); }
+.niva-bg-3 { background: var(--n3); } .niva-bg-4 { background: var(--n4); } .niva-bg-5 { background: var(--n5); }
+
+.tag.niva { color: var(--n); border-color: color-mix(in srgb, var(--n) 40%, var(--line)); }
+.tag.liten { font-size: .68rem; padding: 1px 7px; margin-left: 8px; vertical-align: 2px; }
+
+.fremdrift { padding: 30px 0 80px; }
+.fhead h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.9rem, 4vw, 2.6rem); letter-spacing: -.02em; margin: 0 0 8px; }
+.fhead .lede { color: var(--muted); font-size: 1.05rem; max-width: 60ch; margin: 0 0 26px; }
+
+.fstolpe { display: flex; gap: 3px; height: 34px; border-radius: 10px; overflow: hidden; margin-bottom: 12px; }
+.fstolpe .seg {
+  border: 0; cursor: pointer; min-width: 28px; color: #0E1014;
+  font-family: var(--font-display); font-weight: 700; font-size: .9rem;
+  transition: opacity .2s var(--ease);
+}
+.fstolpe .seg.dim { opacity: .25; }
+.flegende { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 26px; }
+.flegende .leg {
+  display: inline-flex; align-items: center; gap: 7px; cursor: pointer;
+  font-family: var(--font-body); font-size: .86rem; color: var(--muted);
+  background: transparent; border: 1px solid var(--line-soft); border-radius: 999px; padding: 5px 10px 5px 8px;
+}
+.flegende .leg b { color: var(--text); font-weight: 600; }
+.flegende .leg:hover { color: var(--text); border-color: var(--line); }
+.flegende .leg.active { color: var(--text); border-color: var(--faint); background: var(--surface); }
+.flegende .sw { width: 10px; height: 10px; border-radius: 3px; }
+
+.fkontroller { display: flex; flex-wrap: wrap; gap: 14px; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.fsort { color: var(--faint); font-size: .88rem; display: flex; align-items: center; gap: 8px; }
+.fsort select {
+  font: inherit; color: var(--text); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 9px; padding: 7px 10px;
+}
+
+.ftabell { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.frad {
+  display: grid; grid-template-columns: minmax(180px, 1.3fr) 190px minmax(200px, 1.6fr) 96px;
+  gap: 16px; align-items: center; padding: 13px 18px; border-top: 1px solid var(--line-soft);
+}
+.frad:first-child { border-top: 0; }
+.frad:not(.fhoder):hover { background: var(--surface); }
+.fhoder { background: var(--surface); color: var(--faint); font-size: .76rem; letter-spacing: .05em; text-transform: uppercase; padding-top: 10px; padding-bottom: 10px; }
+.fnavn { font-family: var(--font-display); font-weight: 600; font-size: 1rem; min-width: 0; }
+.fnavn a { border-bottom: 1px solid var(--line); }
+.fnavn a:hover { border-color: var(--text); }
+.fnavn small { display: block; font-family: var(--font-body); font-weight: 400; color: var(--faint); font-size: .82rem; margin-top: 3px; }
+.fniva { display: flex; align-items: center; gap: 10px; }
+.nlbl { color: var(--n); font-size: .86rem; white-space: nowrap; }
+.opp { color: var(--n5); font-size: .7rem; }
+.fneste-celle { color: var(--muted); font-size: .93rem; }
+.fdato { color: var(--faint); font-size: .84rem; white-space: nowrap; }
+.dim { color: var(--faint); }
+.fnote { color: var(--faint); font-size: .85rem; margin-top: 16px; }
+
+.prikker { display: inline-flex; gap: 3px; flex: none; }
+.prikker i { width: 9px; height: 9px; border-radius: 3px; background: var(--line); }
+.prikker i.pa { background: var(--n); }
+
+/* boks på detaljsiden */
+.fbox { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; }
+.fbox h2 { margin-top: 0; }
+.fbox-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.fskala { color: var(--muted); margin: 10px 0 0; }
+.fneste { margin: 10px 0 0; color: var(--text); }
+.fneste span { display: block; color: var(--faint); font-size: .78rem; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 2px; }
+
+@media (max-width: 760px) {
+  .fhoder { display: none; }
+  .frad { grid-template-columns: 1fr auto; gap: 6px 12px; padding: 14px 16px; }
+  .fnavn { grid-column: 1 / -1; }
+  .fniva { grid-column: 1; }
+  .fdato { grid-column: 2; grid-row: 2; text-align: right; }
+  .fneste-celle { grid-column: 1 / -1; }
 }
